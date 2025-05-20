@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Components.Sections;
 using System.Diagnostics;
 using System.Net.Mail;
 using System.Reflection;
@@ -14,6 +15,10 @@ namespace AHREM_API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: false)
+                .AddJsonFile("appsettings.Variables.json", optional: true)
+                .AddEnvironmentVariables();
             //builder.Services.AddAuthorization();
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -30,6 +35,11 @@ namespace AHREM_API
             //app.UseHttpsRedirection();
 
             //app.UseAuthorization();
+
+            // DB setup
+            string dbString = builder.Configuration.GetSection("ConnectionStrings")["DefaultConnection"];
+
+            Debug.WriteLine($"dbString: {dbString}");
 
             List<DeviceData> dummyData = new List<DeviceData>();
             List<Device> dummyDevices = new List<Device>();
