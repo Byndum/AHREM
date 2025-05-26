@@ -50,17 +50,19 @@ namespace AHREM_API.Services
         {
             if (_connection != null)
             {
-                string query = "INSERT INTO devices (ID, IsActive, Firmware, MAC) VALUES (@ID, @IsActive, @Firmware, @MAC)";
+                string query = "INSERT INTO devices (IsActive, Firmware, MAC) VALUES (@IsActive, @Firmware, @MAC)";
 
                 _connection.Open();
 
                 using (var cmd = _connection.CreateCommand())
                 {
-                    cmd.Parameters.AddWithValue("@ID", device.ID);
-                    cmd.Parameters.AddWithValue("@RoomName", device.IsActive);
-                    cmd.Parameters.AddWithValue("@Temperature", device.Firmware);
-                    cmd.Parameters.AddWithValue("@Humidity", device.MAC);
+                    cmd.CommandText = query;
+                    cmd.Parameters.AddWithValue("@IsActive", device.IsActive);
+                    cmd.Parameters.AddWithValue("@Firmware", device.Firmware);
+                    cmd.Parameters.AddWithValue("@MAC", device.MAC);
                     cmd.ExecuteNonQuery();
+
+                    Debug.WriteLine(cmd.CommandText);
                 }
                 return true;
             }
