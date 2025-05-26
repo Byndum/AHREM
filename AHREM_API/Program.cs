@@ -16,6 +16,7 @@ namespace AHREM_API
     {
         public static void Main(string[] args)
         {
+            #region API setup
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -37,7 +38,9 @@ namespace AHREM_API
             {
                 app.MapOpenApi();
             }
+            #endregion
 
+            #region Endpoints
             // Get a list of all device (for admins).
             app.MapGet("/GetAllDevices", (DBService dBService) =>
             {
@@ -69,6 +72,7 @@ namespace AHREM_API
 
                 return Results.Ok("The device has been added!");
             });
+            #endregion
 
             app.Run();
         }
