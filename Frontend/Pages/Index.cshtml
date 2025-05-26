@@ -1,0 +1,31 @@
+﻿@page
+@model MyWebsite.Pages.IndexModel
+
+<h2>Devices</h2>
+
+<form method="post">
+    <input asp-for="NewDevice.DeviceName" placeholder="Name" />
+    <input asp-for="NewDevice.Firmware" placeholder="Firmware" />
+    <input asp-for="NewDevice.MACAddress" placeholder="MAC" />
+    <input asp-for="NewDevice.IsActive" type="checkbox" /> Active
+    <button type="submit" asp-page-handler="Add">Add Device</button>
+</form>
+
+@if (Model.Devices.Count == 0)
+{
+    <p>No devices found.</p>
+}
+else
+{
+    <ul>
+        @foreach (var device in Model.Devices)
+        {
+            <li>
+                <b>@device.DeviceName</b> - @device.Firmware - @device.MACAddress - @(device.IsActive ? "🟢" : "🔴")
+                <form method="post" asp-page-handler="Delete" asp-route-deviceId="@device.DeviceId" style="display:inline">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        }
+    </ul>
+}
