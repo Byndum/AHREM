@@ -47,11 +47,14 @@ namespace AHREM_API
             // Removes device with given ID.
             app.MapGet("/RemoveDevice", (int? id, DBService dBService) =>
             {
-                if (id != null)
+                var test = dBService.DeleteDevice(id.Value);
+
+                if (!test)
                 {
-                    return Results.Ok(dBService.DeleteDevice(id.Value));
+                    return Results.BadRequest("No device with given ID!");
                 }
-                return Results.BadRequest("No device with given ID!");
+
+                return Results.Ok(dBService.DeleteDevice(id.Value));
             });
             
             // Adds new device to database.

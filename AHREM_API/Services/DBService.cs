@@ -71,8 +71,18 @@ namespace AHREM_API.Services
         {
             if (_connection != null)
             {
+                _connection.Open();
 
+                using (var cmd = _connection.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandTimeout = 300;
+                    cmd.CommandText = $"DELETE FROM devices WHERE ID = {id}";
+                }
+
+                return true;
             }
+            return false;
         }
     }
 }
