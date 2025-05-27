@@ -9,6 +9,11 @@ jobs:
   delivery:
     runs-on: ubuntu-latest
     permissions: write-all
+    env:
+      DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - name: Checkout code
@@ -60,11 +65,6 @@ jobs:
           target: dowa/
 
       - name: Start Compose with Database
-        env:
-          DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.USER }}
-          DB_PASSWORD: ${{ secrets.PASSWORD }}
         uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ vars.SERVER_IP }}
