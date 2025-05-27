@@ -1,0 +1,38 @@
+services:
+  webapi:
+    image: ghcr.io/byndum/AHREM:dockerbuild
+    depends_on:
+      - mariadb
+    ports:
+      - "5051:5051"
+
+  mariadb:
+    image: mariadb:11.2
+    environment:
+      MariaDBRootPassword: ${MariaDB_Password_Root}
+      MariaDBName: ${MariaDB_Name}
+      MariaDBUser: ${MariaDB_User}
+      MariaDBPassword: ${MariaDB_Password}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+
+  flyway:
+    image: flyway/flyway:latest
+    container_name: flyway
+    volumes:
+      - ./db/migrations:/flyway/sql
+    command: [ "migrate" ]
+    env_file:
+      - .env
+    environment:
+      FLYWAY_URL: jdbc:mariadb://mariadb:3306/${MariaDB_Name}
+      FLYWAY_USER: ${MariaDB_User}
+      FLYWAY_PASSWORD: ${MariaDB_Password}
+    restart: on-failure
+
+volumes:
+  mariadb_data:
