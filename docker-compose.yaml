@@ -1,11 +1,4 @@
 services:
-  webapi:
-    image: ghcr.io/byndum/ahrem:latest
-    depends_on:
-      - mariadb
-    ports:
-      - "5051:5051"
-
   mariadb:
     image: mariadb:11.2
     environment:
@@ -19,6 +12,13 @@ services:
       - .env
     ports:
       - "3306:3306"
+  
+  webapi:
+    image: ghcr.io/byndum/ahrem:latest
+    depends_on:
+      - mariadb
+    ports:
+      - "5051:5051"
 
   flyway:
     image: flyway/flyway:latest

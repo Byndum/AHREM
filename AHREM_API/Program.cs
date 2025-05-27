@@ -42,6 +42,7 @@ namespace AHREM_API
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)  // dev/stage/prod override
                 .AddJsonFile("appsettings.Variables.json", optional: true)                               // optional override file
                 .AddEnvironmentVariables();
+
             builder.Services.AddAuthentication();
 
             builder.Services.AddScoped<DBService>();
