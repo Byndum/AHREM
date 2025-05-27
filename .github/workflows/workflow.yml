@@ -12,18 +12,17 @@ jobs:
     services:
       mariadb:
         image: mariadb:10.11
+        ports:
+          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: 1234
           MYSQL_DATABASE: air_monitor_db
-          MYSQL_USER: root
-          MYSQL_PASSWORD: 1234
-        ports:
-          - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -p1234"
+          --health-cmd='mysqladmin ping --silent'
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=3
+
 
     steps:
       - name: Checkout code
