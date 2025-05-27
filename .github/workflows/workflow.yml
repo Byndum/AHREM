@@ -59,7 +59,7 @@ jobs:
 
       - name: Run DB migrations with Flyway
         run: |
-          flyway -url=jdbc:mariadb://127.0.0.1:3306/air_monitor_db -user=root -password=1234 -locations=filesystem:./Database/Migrations migrate
+          flyway -url=jdbc:mariadb://127.0.0.1:3306/air_monitor_db -user=root -password=1234 -locations=filesystem:./db/migration migrate
 
       - name: Restore and Build
         run: |
