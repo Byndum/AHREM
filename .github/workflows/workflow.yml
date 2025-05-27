@@ -9,6 +9,21 @@ jobs:
   test-and-analyze:
     runs-on: ubuntu-latest
 
+    services:
+      mariadb:
+        image: mariadb:10.11
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: 1234
+          MYSQL_DATABASE: air_monitor_db
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,6 +45,20 @@ jobs:
           echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list > /dev/null
           sudo apt-get update
           sudo apt-get install -y k6
+          # Install Flyway CLI
+          curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz | tar xz
+          sudo ln -s $PWD/flyway-*/flyway /usr/local/bin/flyway
+
+      - name: Wait for MariaDB to be ready
+        run: |
+          for i in {1..10}; do
+            mysqladmin ping -h 127.0.0.1 -P 3306 -u root -p1234 && break
+            echo "Waiting for MariaDB..." && sleep 3
+          done
+
+      - name: Run DB migrations with Flyway
+        run: |
+          flyway -url=jdbc:mariadb://127.0.0.1:3306/air_monitor_db -user=root -password=1234 -locations=filesystem:./db/migration migrate
 
       - name: Restore and Build
         run: |
@@ -37,6 +66,8 @@ jobs:
           dotnet build --configuration Release
 
       - name: Run Unit Tests
+        env:
+          ConnectionStrings__Default: "Server=127.0.0.1;Port=3306;Database=air_monitor_db;User=root;Password=1234;"
         run: |
           dotnet test Tests/AHREM.API.Tests/ --collect:"XPlat Code Coverage" --results-directory Tests/AHREM.API.Tests/TestResults
 
