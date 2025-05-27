@@ -36,11 +36,16 @@ jobs:
 
       - name: Build
         run: dotnet build
+            
+      - name: Run unit tests
+        run: dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
 
-      - name: Run Tests and Generate Report
+      - name: Generate report
         run: |
-          dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
-          reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:coverage-report -reporttypes:SonarQube
-
+           reportgenerator \
+          -reports:TestResults/**/coverage.cobertura.xml \
+          -targetdir:coverage-report \
+          -reporttypes:SonarQube
+      
       - name: End SonarQube Analysis
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONARQUBE_TOKEN }}"

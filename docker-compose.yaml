@@ -1,6 +1,8 @@
 services:
   webapi:
     image: ghcr.io/byndum/ahrem:latest
+
+     
     depends_on:
       - mariadb
     ports:
