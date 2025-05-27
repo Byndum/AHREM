@@ -22,7 +22,7 @@ namespace AHREM_API
             // Add services to the container.
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false)
-                .AddJsonFile("appsettings.variables.json", optional: true)
+                .AddJsonFile("appsettings.Variables.json", optional: true)
                 .AddEnvironmentVariables();
             builder.Services.AddAuthentication();
 
@@ -44,7 +44,7 @@ namespace AHREM_API
             // Get a list of all device (for admins).
             app.MapGet("/GetAllDevices", (DBService dBService) =>
             {
-                return Results.Ok(dBService.GetAllDevices);
+                return Results.Ok(dBService.GetAllDevices());
             });
 
             // Removes device with given ID.

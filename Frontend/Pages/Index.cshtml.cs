@@ -1,6 +1,7 @@
 using Frontend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Diagnostics;
 using System.Net.Http.Json;
 
 namespace MyWebsite.Pages
@@ -36,6 +37,7 @@ namespace MyWebsite.Pages
             var client = _httpClientFactory.CreateClient("ApiClient");
 
             var response = await client.PostAsJsonAsync("AddDevice", NewDevice);
+
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToPage();
