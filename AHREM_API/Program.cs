@@ -83,11 +83,11 @@ namespace AHREM_API
             app.MapPost("/AddDevice", (Device device, DBService dBService) =>
             {
                 try
-                {
+                {/*
                     if (isAddDevice)
                     {
                         return Results.Problem("This function has been disabled");
-                    }
+                    }*/
                     var test = dBService.AddDevice(device);
                     if (!test)
                     {
