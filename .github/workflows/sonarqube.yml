@@ -1,0 +1,46 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  sonar-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install tools
+        run: |
+          dotnet tool install -g dotnet-sonarscanner
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Begin SonarQube Analysis
+        run: |
+          dotnet sonarscanner begin \
+            /k:"Byndum_DevOpsCalculator" \
+            /d:sonar.host.url="${{ vars.CALCULATOR_URL }}" \
+            /d:sonar.token="${{ secrets.CALCULATOR_CONNECTION_TOKEN_SONARQUBE }}" \
+            /d:sonar.coverageReportPaths="coverage-report/SonarQube.xml" \
+            /d:sonar.qualitygate.wait=true \
+            /d:sonar.qualitygate.timeout=300
+
+      - name: Build
+        run: dotnet build
+
+      - name: Run Tests and Generate Report
+        run: |
+          dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
+          reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:coverage-report -reporttypes:SonarQube
+
+      - name: End SonarQube Analysis
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.CALCULATOR_CONNECTION_TOKEN_SONARQUBE }}"

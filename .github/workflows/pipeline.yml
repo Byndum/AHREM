@@ -1,0 +1,77 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  delivery:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Semantic Versioning
+        id: version
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          bump_each_commit: true
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Repo Name Lowercase
+        run: echo "GITHUB_REPO_LC=${GITHUB_REPO,,}" >> $GITHUB_ENV
+        env:
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build \
+            -t ghcr.io/${{ env.GITHUB_REPO_LC }}:latest \
+            -t ghcr.io/${{ env.GITHUB_REPO_LC }}:${{ steps.version.outputs.version }} \
+            -f ./DevOpsCalculator/Dockerfile .
+          docker push ghcr.io/${{ env.GITHUB_REPO_LC }} --all-tags
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.version.outputs.version }}
+          generateReleaseNotes: true
+          body: |
+            Docker image: ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
+
+      - name: Deploy Docker Compose to Staging
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USERNAME }}
+          key: ${{ secrets.STAGING_KEY_SSH_KEY }}
+          source: "docker-compose.yaml"
+          target: dowa/
+
+      - name: Start Compose with Database
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USERNAME }}
+          key: ${{ secrets.STAGING_KEY_SSH_KEY }}
+          script: |
+            cd dowa
+            cat <<EOF > .env
+            DATABASE_ROOT_PASSWORD=${{ secrets.DATABASE_ROOT_PASSWORD }}
+            DATABASE_NAME=${{ vars.DATABASE_NAME }}
+            DATABASE_USER=${{ vars.DATABASE_USER }}
+            DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+            EOF
+            docker compose pull
+            docker compose up -d
