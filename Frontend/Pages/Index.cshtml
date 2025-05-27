@@ -3,12 +3,20 @@
 
 <h2>Devices</h2>
 
-<form method="post">
-    <input asp-for="NewDevice.Firmware" placeholder="Firmware" />
-    <input asp-for="NewDevice.MAC" placeholder="MAC" />
-    <input asp-for="NewDevice.IsActive" type="checkbox" /> Active
-    <button type="submit" asp-page-handler="Add">Add Device</button>
-</form>
+@if (Model.AddDeviceEnabled)
+{
+    <form method="post">
+        <input asp-for="NewDevice.Firmware" placeholder="Firmware" />
+        <input asp-for="NewDevice.MAC" placeholder="MAC" />
+        <input asp-for="NewDevice.IsActive" type="checkbox" /> Active
+        <button type="submit" asp-page-handler="Add">Add Device</button>
+    </form>
+}
+else
+{
+    <p><i>Adding new devices is currently disabled.</i></p>
+}
+
 
 @if (Model.Devices.Count == 0)
 {
