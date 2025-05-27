@@ -12,6 +12,7 @@ using System.Text.Json;
 using FeatureHubSDK;
 using Serilog;
 using LaunchDarkly.Logging;
+using Monitoring;
 
 namespace AHREM_API
 {
@@ -20,8 +21,11 @@ namespace AHREM_API
         public static async Task Main(string[] args)
         {
             #region API setup
+            MonitorService.Log.Information("Starting AHREM API...");
+    
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Host.UseSerilog();
 
             builder.Services.AddScoped<DBService>();
 
@@ -51,6 +55,8 @@ namespace AHREM_API
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
+
+            app.UseSerilogRequestLogging();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

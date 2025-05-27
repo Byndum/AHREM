@@ -1,4 +1,5 @@
 ﻿using AHREM_API.Models;
+using Monitoring;
 using MySqlConnector;
 using System.Data;
 using System.Diagnostics;
@@ -17,11 +18,13 @@ namespace AHREM_API.Services
 
         public List<Device> GetAllDevices()
         {
+            MonitorService.Log.Information("Getting all devices...");
             if (_connection != null)
             {
                 _connection.Open();
                 using (var cmd = _connection.CreateCommand())
                 {
+
                     cmd.CommandType = CommandType.Text;
                     cmd.CommandTimeout = 300;
                     cmd.CommandText = $"SELECT * FROM devices";
@@ -40,9 +43,12 @@ namespace AHREM_API.Services
                             MAC = sqlData.GetString("MAC")
                         });
                     }
+
+                    MonitorService.Log.Debug($"Fetched {tempList.Count} devices.");
                     return tempList;
                 }
             }
+
             return null;
         }
 
