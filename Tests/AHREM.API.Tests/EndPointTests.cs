@@ -20,7 +20,8 @@ namespace AHREM.API.Tests
         private DBService GetDbService()
         {
             var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.Variables.json")
+                .AddJsonFile("appsettings.Variables.json", optional: true)
+                .AddEnvironmentVariables()
                 .Build();
 
             return new DBService(config);
