@@ -46,13 +46,13 @@ namespace MyWebsite.Pages
             ModelState.AddModelError(string.Empty, "Failed to add device.");
             return Page();
         }
-        /*
-        public async Task<IActionResult> OnPostDeleteAsync(int deviceId)
+        
+        public async Task<IActionResult> OnDeleteDeleteAsync(int deviceId)
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
             var response = await client.DeleteAsync($"RemoveDevice?id={deviceId}");
             return RedirectToPage();
-        }*/
+        }
     }
 }
