@@ -15,14 +15,16 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: 1234
-          MYSQL_DATABASE: air_monitor_db
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
 
+    env:
+      CONNECTIONSTRINGS__DEFAULTCONNECTION: ${{ secrets.CONNECTION_STRING }}
 
     steps:
       - name: Checkout code
