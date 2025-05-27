@@ -29,6 +29,11 @@ namespace AHREM_API
                 .AddEnvironmentVariables();
             builder.Services.AddAuthentication();
 
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+            }
+
             builder.Services.AddScoped<DBService>();
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
