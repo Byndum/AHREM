@@ -2,17 +2,35 @@ services:
   mariadb:
     image: mariadb:11.2
     environment:
-      MariaDBRootPassword: $${{ secrets.DATABASE_ROOT_PASSWORD }}
-      MariaDBName: $${{ vars.DATABASE_NAME }}
-      MariaDBUser: $${{ vars.DATABASE_USER }}
-      MariaDBPassword: $${{ secrets.DATABASE_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
     env_file:
       - .env
     ports:
       - "3306:3306"
-  
+
+  seq:
+    image: datalust/seq
+    ports:
+      - 5341:5341
+      - 5342:80
+    volumes:
+      - rps_seq_data:/data
+    environment:
+      - ACCEPT_EULA=Y
+
+  featurehub:
+    image: featurehub/party-server:latest
+    restart: always
+    volumes:
+      - featurehub-h2-data:/db
+    ports:
+      - 8085:8085
+
   webapi:
     image: ghcr.io/byndum/ahrem:latest
     depends_on:
@@ -36,3 +54,5 @@ services:
 
 volumes:
   mariadb_data:
+  featurehub-h2-data:
+  rps_seq_data:
