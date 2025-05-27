@@ -27,6 +27,7 @@ namespace AHREM_API
 
             builder.Host.UseSerilog();
 
+            // random comment
             builder.Services.AddScoped<DBService>();
 
             //// Feature Hub
