@@ -1,6 +1,6 @@
 services:
   webapi:
-    image: ghcr.io/byndum/AHREM:dockerbuild
+    image: ghcr.io/byndum/ahrem:dockerbuild
     depends_on:
       - mariadb
     ports:

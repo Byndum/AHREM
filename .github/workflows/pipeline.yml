@@ -27,7 +27,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Repo Name Lowercase
         run: echo "GITHUB_REPO_LC=${GITHUB_REPO,,}" >> $GITHUB_ENV
@@ -39,7 +39,7 @@ jobs:
           docker build \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}:latest \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}:${{ steps.version.outputs.version }} \
-            -f ./AHREM/Dockerfile .
+            -f ./AHREM_API/Dockerfile .
           docker push ghcr.io/${{ env.GITHUB_REPO_LC }} --all-tags
 
       - name: Create GitHub Release
@@ -68,10 +68,11 @@ jobs:
           script: |
             cd dowa
             cat <<EOF > .env
+            IMAGE_TAG=${{ steps.version.outputs.version }}
             DATABASE_ROOT_PASSWORD=${{ secrets.DATABASE_ROOT_PASSWORD }}
             DATABASE_NAME=${{ vars.DATABASE_NAME }}
             DATABASE_USER=${{ vars.DATABASE_USER }}
             DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
             EOF
             docker compose pull
-            docker compose up -d
+            docker compose up -d    
