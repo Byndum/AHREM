@@ -18,7 +18,7 @@ namespace AHREM_API
         {
             #region API setup
             var builder = WebApplication.CreateBuilder(args);
-
+                
             // Add services to the container.
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false)
@@ -59,18 +59,24 @@ namespace AHREM_API
 
                 return Results.Ok("Device removed successfully!");
             });
-            
+
             // Adds new device to database.
             app.MapPost("/AddDevice", (Device device, DBService dBService) =>
             {
-                var test = dBService.AddDevice(device);
+                try
+                {
+                    var test = dBService.AddDevice(device);
+                    if (!test)
+                    {
+                        return Results.Problem("Error while trying to add new device!");
+                    }
 
-                if (!test)
+                    return Results.Ok("The device has been added!");
+                }
+                catch (Exception)
                 {
                     return Results.Problem("Error while trying to add new device!");
                 }
-
-                return Results.Ok("The device has been added!");
             });
             #endregion
 

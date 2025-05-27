@@ -61,8 +61,6 @@ namespace AHREM_API.Services
                     cmd.Parameters.AddWithValue("@Firmware", device.Firmware);
                     cmd.Parameters.AddWithValue("@MAC", device.MAC);
                     cmd.ExecuteNonQuery();
-
-                    Debug.WriteLine(cmd.CommandText);
                 }
                 return true;
             }
@@ -79,13 +77,15 @@ namespace AHREM_API.Services
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.CommandTimeout = 300;
-                    cmd.CommandText = $"DELETE FROM devices WHERE ID = {id}";
-                    cmd.ExecuteNonQuery();
-                }
+                    cmd.CommandText = "DELETE FROM devices WHERE ID = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
 
-                return true;
+                    int affectedRows = cmd.ExecuteNonQuery();
+                    return affectedRows > 0;
+                }
             }
             return false;
         }
+
     }
 }
