@@ -15,6 +15,7 @@ services:
       MariaDBName: $${{ vars.DATABASE_NAME }}
       MariaDBUser: $${{ vars.DATABASE_USER }}
       MariaDBPassword: $${{ secrets.DATABASE_PASSWORD }}
+      MariaDBConnectionString: Server=$${{ vars.SERVER_IP }};Port=3306;Database=MariaDBName;User ID=MariaDBUser;Password=MariaDBPassword;
     volumes:
       - mariadb_data:/var/lib/mysql
     env_file:
