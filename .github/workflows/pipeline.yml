@@ -68,10 +68,11 @@ jobs:
           script: |
             cd dowa
             cat <<EOF > .env
+            IMAGE_TAG=${{ steps.version.outputs.version }}
             DATABASE_ROOT_PASSWORD=${{ secrets.DATABASE_ROOT_PASSWORD }}
             DATABASE_NAME=${{ vars.DATABASE_NAME }}
             DATABASE_USER=${{ vars.DATABASE_USER }}
             DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
             EOF
             docker compose pull
-            docker compose up -d
+            docker compose up -d    
