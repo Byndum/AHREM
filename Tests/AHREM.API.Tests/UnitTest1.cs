@@ -12,14 +12,10 @@ namespace AHREM.API.Tests
         [SetUp]
         public void Setup()
         {
-            var connectionString = Environment.GetEnvironmentVariable("MariaDBConnectionString");
-
-            Debug.WriteLine(connectionString);
-
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.Variables.json", optional: false)
-                .AddJsonFile(connectionString, optional: true)
+                .AddJsonFile("appsettings.Variables.json", optional: true)
+                .AddEnvironmentVariables()
                 .Build();
 
             _dbService = new DBService(config);
