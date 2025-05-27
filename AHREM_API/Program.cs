@@ -18,11 +18,14 @@ namespace AHREM_API
         {
             #region API setup
             var builder = WebApplication.CreateBuilder(args);
-                
+
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? Environment.GetEnvironmentVariable("MariaDBConnectionString");
+
             // Add services to the container.
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false)
-                .AddJsonFile("appsettings.Variables.json", optional: true)
+                .AddJsonFile(connectionString, optional: true)
                 .AddEnvironmentVariables();
             builder.Services.AddAuthentication();
 
