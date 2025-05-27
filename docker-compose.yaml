@@ -9,10 +9,10 @@ services:
   mariadb:
     image: mariadb:11.2
     environment:
-      MariaDBRootPassword: ${secrets.DATABASE_ROOT_PASSWORD}
-      MariaDBName: ${vars.DATABASE_NAME}
-      MariaDBUser: ${vars.DATABASE_USER}
-      MariaDBPassword: ${secrets.DATABASE_PASSWORD}
+      MariaDBRootPassword: ${{secrets.DATABASE_ROOT_PASSWORD}}
+      MariaDBName: ${{vars.DATABASE_NAME}}
+      MariaDBUser: ${{vars.DATABASE_USER}}
+      MariaDBPassword: ${{secrets.DATABASE_PASSWORD}}
     volumes:
       - mariadb_data:/var/lib/mysql
     env_file:
