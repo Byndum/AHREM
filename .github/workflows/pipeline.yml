@@ -62,8 +62,8 @@ jobs:
       - name: Start Compose with Database
         env:
           DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.USER }}
+          DB_NAME: ${{ vars.DB_NAME }}
+          DB_USER: ${{ vars.USER }}
           DB_PASSWORD: ${{ secrets.PASSWORD }}
         uses: appleboy/ssh-action@v1.2.1
         with:
