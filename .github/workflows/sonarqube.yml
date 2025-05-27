@@ -46,6 +46,6 @@ jobs:
           -reports:TestResults/**/coverage.cobertura.xml \
           -targetdir:coverage-report \
           -reporttypes:SonarQube
-      
+      #Test a Commit.
       - name: End SonarQube Analysis
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONARQUBE_TOKEN }}"
