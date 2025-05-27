@@ -13,7 +13,7 @@ namespace AHREM.API.Tests
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.Variables.json")
                 .Build();
 
             _dbService = new DBService(config);
