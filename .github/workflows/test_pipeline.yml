@@ -19,6 +19,7 @@ jobs:
           MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         ports:
           - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout code
@@ -35,6 +36,10 @@ jobs:
         run: |
           dotnet tool install -g dotnet-sonarscanner
           dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Wait for MariaDB
+        run: |
+          timeout 60 bash -c 'until mysqladmin ping -h 127.0.0.1 -u ${{ vars.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} --silent; do sleep 1; done'
 
       - name: Begin SonarQube Analysis
         run: |
