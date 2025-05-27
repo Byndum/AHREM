@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Fronte
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AHREM.API.Tests", "Tests\AHREM.API.Tests\AHREM.API.Tests.csproj", "{1BF61C3E-88D0-4975-9058-8D2355CF6CE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{68B99182-E0A1-46D0-B7BF-A5339915ED3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68B99182-E0A1-46D0-B7BF-A5339915ED3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68B99182-E0A1-46D0-B7BF-A5339915ED3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BF61C3E-88D0-4975-9058-8D2355CF6CE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BF61C3E-88D0-4975-9058-8D2355CF6CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BF61C3E-88D0-4975-9058-8D2355CF6CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BF61C3E-88D0-4975-9058-8D2355CF6CE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
