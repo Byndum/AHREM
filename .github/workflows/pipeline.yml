@@ -27,7 +27,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
 
       - name: Set Repo Name Lowercase
         run: echo "GITHUB_REPO_LC=${GITHUB_REPO,,}" >> $GITHUB_ENV
@@ -39,8 +39,8 @@ jobs:
           docker build \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}:latest \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}:${{ steps.version.outputs.version }} \
-            -f ./DevOpsCalculator/Dockerfile .
-          docker push ghcr.io/${{ env.GITHUB_REPO_LC }} --all-tags
+            -f ./AHREM/Dockerfile .
+          docker push ghcr.io/${{ env.GITHUB_RzEPO_LC }} --all-tags
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -55,7 +55,7 @@ jobs:
         with:
           host: ${{ vars.SERVER_IP }}
           username: ${{ vars.SERVER_USERNAME }}
-          key: ${{ secrets.STAGING_KEY_SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           source: "docker-compose.yaml"
           target: dowa/
 
@@ -64,7 +64,7 @@ jobs:
         with:
           host: ${{ vars.SERVER_IP }}
           username: ${{ vars.SERVER_USERNAME }}
-          key: ${{ secrets.STAGING_KEY_SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             cd dowa
             cat <<EOF > .env
