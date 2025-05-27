@@ -18,7 +18,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: 1234
           MYSQL_DATABASE: air_monitor_db
         options: >-
-          --health-cmd='mysqladmin ping --silent'
+          --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
