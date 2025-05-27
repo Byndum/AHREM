@@ -1,6 +1,7 @@
 ﻿using AHREM_API.Models;
 using AHREM_API.Services;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace AHREM.API.Tests
 {
@@ -12,6 +13,8 @@ namespace AHREM.API.Tests
         public void Setup()
         {
             var connectionString = Environment.GetEnvironmentVariable("MariaDBConnectionString");
+
+            Debug.WriteLine(connectionString);
 
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
