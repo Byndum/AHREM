@@ -29,9 +29,9 @@ services:
     env_file:
       - .env
     environment:
-      FLYWAY_URL: jdbc:mariadb://mariadb:3306/${vars.DATABASE_NAME}
-      FLYWAY_USER: ${vars.DATABASE_USER}
-      FLYWAY_PASSWORD: ${ secrets.DATABASE_PASSWORD }
+      FLYWAY_URL: jdbc:mariadb://mariadb:3306/$${{ vars.DATABASE_NAME }}
+      FLYWAY_USER: $${{ vars.DATABASE_USER }}
+      FLYWAY_PASSWORD: $${{ secrets.DATABASE_PASSWORD }}
     restart: on-failure
 
 volumes:
