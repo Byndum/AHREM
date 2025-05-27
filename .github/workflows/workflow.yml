@@ -8,13 +8,14 @@ on:
 jobs:
   test-and-analyze:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Full history for accurate test and analysis
 
-      - name: Setup .NET and Node
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
@@ -35,7 +36,34 @@ jobs:
           dotnet restore
           dotnet build --configuration Release
 
-      - name: Run Unit Tests and Generate Report
+      - name: Run Unit Tests
         run: |
-          dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
-          reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:coverage-report -reporttypes:Html
+          dotnet test Tests/AHREM.API.Tests/ --collect:"XPlat Code Coverage" --results-directory Tests/AHREM.API.Tests/TestResults
+
+      - name: Generate Coverage Report
+        if: always()
+        run: |
+          reportgenerator \
+            -reports:"Tests/AHREM.API.Tests/TestResults/**/coverage.cobertura.xml" \
+            -targetdir:Tests/AHREM.API.Tests/coverage-report \
+            -reporttypes:Html
+
+      - name: Run Mutation Tests
+        if: always()
+        run: |
+          cd Tests/AHREM.API.Tests/
+          dotnet stryker --break-at 80
+
+      - name: Upload Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Coverages
+          path: Tests/AHREM.API.Tests/coverage-report/
+
+      - name: Upload Stryker Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mutants
+          path: Tests/AHREM.API.Tests/StrykerOutput/
