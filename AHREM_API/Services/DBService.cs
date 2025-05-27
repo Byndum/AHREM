@@ -80,6 +80,7 @@ namespace AHREM_API.Services
                     cmd.CommandType = CommandType.Text;
                     cmd.CommandTimeout = 300;
                     cmd.CommandText = $"DELETE FROM devices WHERE ID = {id}";
+                    cmd.ExecuteNonQuery();
                 }
 
                 return true;
