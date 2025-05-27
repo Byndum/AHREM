@@ -1,6 +1,6 @@
 services:
   webapi:
-    image: ghcr.io/byndum/ahrem:dockerbuild
+    image: ghcr.io/byndum/ahrem:latest
     depends_on:
       - mariadb
     ports:
@@ -9,10 +9,10 @@ services:
   mariadb:
     image: mariadb:11.2
     environment:
-      MariaDBRootPassword: ${MariaDB_Password_Root}
-      MariaDBName: ${MariaDB_Name}
-      MariaDBUser: ${MariaDB_User}
-      MariaDBPassword: ${MariaDB_Password}
+      MariaDBRootPassword: $${{ secrets.DATABASE_ROOT_PASSWORD }}
+      MariaDBName: $${{ vars.DATABASE_NAME }}
+      MariaDBUser: $${{ vars.DATABASE_USER }}
+      MariaDBPassword: $${{ secrets.DATABASE_PASSWORD }}
     volumes:
       - mariadb_data:/var/lib/mysql
     env_file:
@@ -29,9 +29,9 @@ services:
     env_file:
       - .env
     environment:
-      FLYWAY_URL: jdbc:mariadb://mariadb:3306/${MariaDB_Name}
-      FLYWAY_USER: ${MariaDB_User}
-      FLYWAY_PASSWORD: ${MariaDB_Password}
+      FLYWAY_URL: jdbc:mariadb://mariadb:3306/$${{ vars.DATABASE_NAME }}
+      FLYWAY_USER: $${{ vars.DATABASE_USER }}
+      FLYWAY_PASSWORD: $${{ secrets.DATABASE_PASSWORD }}
     restart: on-failure
 
 volumes:
