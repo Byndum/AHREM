@@ -30,11 +30,11 @@ namespace AHREM_API
             FeatureLogging.TraceLogger += (sender, s) => Console.WriteLine("TRACE: " + s);
             FeatureLogging.InfoLogger += (sender, s) => Console.WriteLine("INFO: " + s);
             FeatureLogging.ErrorLogger += (sender, s) => Console.WriteLine("ERROR: " + s);
-
+            /*
             var config = new EdgeFeatureHubConfig("http://featurehub:8085", "your-api-key");
             var fh = await config.NewContext().Build();
             bool isAddDevice = fh["AddDevice"].IsEnabled;
-
+            */
             // Add services to the container.
             builder.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory())
