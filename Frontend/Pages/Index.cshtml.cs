@@ -47,7 +47,7 @@ namespace MyWebsite.Pages
             return Page();
         }
         
-        public async Task<IActionResult> OnDeleteDeleteAsync(int deviceId)
+        public async Task<IActionResult> OnPostDeleteAsync(int deviceId)
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
