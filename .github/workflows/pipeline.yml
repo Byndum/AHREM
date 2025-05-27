@@ -39,7 +39,7 @@ jobs:
           docker build \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}:latest \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}:${{ steps.version.outputs.version }} \
-            -f ./AHREM/Dockerfile
+            -f ./AHREM/Dockerfile.
           docker push ghcr.io/${{ env.GITHUB_REPO_LC }} --all-tags
 
       - name: Create GitHub Release
