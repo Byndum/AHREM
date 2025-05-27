@@ -6,13 +6,21 @@ using System.Net.Http.Json;
 
 namespace MyWebsite.Pages
 {
+    using FeatureHubSDK;
     public class IndexModel : PageModel
     {
+        public bool AddDeviceEnabled { get; set; } = true;
         private readonly IHttpClientFactory _httpClientFactory;
 
         public IndexModel(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+
+            var featureConfig = new EdgeFeatureHubConfig("http://featurehub:8085", "your-api-key");
+
+            // Blocking call (can be improved with caching if performance matters)
+            var context = featureConfig.NewContext().Build().GetAwaiter().GetResult();
+            AddDeviceEnabled = context["AddDevice"].IsEnabled;
         }
 
         public List<Device> Devices { get; set; } = new();

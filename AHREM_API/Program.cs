@@ -9,23 +9,38 @@ using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using FeatureHubSDK;
+using Serilog;
+using LaunchDarkly.Logging;
 
 namespace AHREM_API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             #region API setup
             var builder = WebApplication.CreateBuilder(args);
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                ?? Environment.GetEnvironmentVariable("MariaDBConnectionString");
+
+            builder.Services.AddScoped<DBService>();
+
+            //// Feature Hub
+            FeatureLogging.DebugLogger += (sender, s) => Console.WriteLine("DEBUG: " + s);
+            FeatureLogging.TraceLogger += (sender, s) => Console.WriteLine("TRACE: " + s);
+            FeatureLogging.InfoLogger += (sender, s) => Console.WriteLine("INFO: " + s);
+            FeatureLogging.ErrorLogger += (sender, s) => Console.WriteLine("ERROR: " + s);
+
+            var config = new EdgeFeatureHubConfig("http://featurehub:8085", "your-api-key");
+            var fh = await config.NewContext().Build();
+            bool isAddDevice = fh["AddDevice"].IsEnabled;
 
             // Add services to the container.
             builder.Configuration
-                .AddJsonFile("appsettings.json", optional: false)
-                .AddJsonFile(connectionString, optional: true)
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)                  // base config
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)  // dev/stage/prod override
+                .AddJsonFile("appsettings.Variables.json", optional: true)                               // optional override file
                 .AddEnvironmentVariables();
             builder.Services.AddAuthentication();
 
@@ -68,6 +83,10 @@ namespace AHREM_API
             {
                 try
                 {
+                    if (isAddDevice)
+                    {
+                        return Results.Problem("This function has been disabled");
+                    }
                     var test = dBService.AddDevice(device);
                     if (!test)
                     {
