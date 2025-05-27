@@ -17,7 +17,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '9.0.x'
 
       - name: Install tools
         run: |
@@ -27,9 +27,9 @@ jobs:
       - name: Begin SonarQube Analysis
         run: |
           dotnet sonarscanner begin \
-            /k:"Byndum_DevOpsCalculator" \
-            /d:sonar.host.url="${{ vars.CALCULATOR_URL }}" \
-            /d:sonar.token="${{ secrets.CALCULATOR_CONNECTION_TOKEN_SONARQUBE }}" \
+            /k:"Ahrem_ProjectKey" \
+            /d:sonar.host.url="${{ vars.SONARQUBE_URL }}" \
+            /d:sonar.token="${{ secrets.SONARQUBE_TOKEN }}" \
             /d:sonar.coverageReportPaths="coverage-report/SonarQube.xml" \
             /d:sonar.qualitygate.wait=true \
             /d:sonar.qualitygate.timeout=300
@@ -43,4 +43,4 @@ jobs:
           reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:coverage-report -reporttypes:SonarQube
 
       - name: End SonarQube Analysis
-        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.CALCULATOR_CONNECTION_TOKEN_SONARQUBE }}"
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONARQUBE_TOKEN }}"
