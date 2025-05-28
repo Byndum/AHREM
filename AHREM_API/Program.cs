@@ -27,7 +27,7 @@ namespace AHREM_API
 
             builder.Host.UseSerilog();
             
-            // 3rd comment
+            // 4th comment
             // Another random comment
             // random comment
             builder.Services.AddScoped<DBService>();
