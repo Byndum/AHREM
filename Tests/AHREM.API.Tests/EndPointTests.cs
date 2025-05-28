@@ -262,6 +262,26 @@ namespace AHREM.API.Tests
         }
 
         [Test]
+        public void _MockUp()
+        {
+            var dbService = GetDbService();
+            var deviceData = new DeviceData
+            {
+                ID = 1,
+                RoomName = "LectureRoom1",
+                Temperature = 17f,
+                Humidity = 10f,
+                Radon = 2f,
+                PPM = 20f,
+                AirQuality = 30,
+                DeviceID = 1,
+                TimeStamp = DateTime.Now
+            };
+
+            Assert.Throws<MySqlException>(() => dbService.DeleteDevice(deviceData.DeviceID));
+        }
+
+        [Test]
         public void DeleteDevice_ShouldReturnFalse_WhenConnectionIsNull()
         {
             var dbService = new NullConnectionDbService();
