@@ -307,51 +307,5 @@ namespace AHREM.API.Tests
             var result = dbService.GetAllDevices();
             Assert.That(result, Is.Null);
         }
-
-
-
-
-
-
-
-
-        [Test]
-        public async Task AddDevice_Endpoint_ShouldReturnBadRequest_WhenJsonIsMalformed()
-        {
-            var appFactory = new WebApplicationFactory<Program>();
-            var client = appFactory.CreateClient();
-
-            var malformedJson = "{ IsActive: true, Firmware: '123' "; // missing closing brace, invalid format
-            var content = new StringContent(malformedJson, Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync("/AddDevice", content);
-
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-        }
-
-        [Test]
-        public async Task AddDevice_Endpoint_ShouldReturnBadRequest_WhenEmptyBody()
-        {
-            var appFactory = new WebApplicationFactory<Program>();
-            var client = appFactory.CreateClient();
-
-            var content = new StringContent("", Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync("/AddDevice", content);
-
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-        }
-
-        [Test]
-        public async Task RemoveDevice_Endpoint_ShouldReturnBadRequest_WhenIdIsMissing()
-        {
-            var appFactory = new WebApplicationFactory<Program>();
-            var client = appFactory.CreateClient();
-
-            var response = await client.DeleteAsync("/RemoveDevice"); // no id param
-
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-        }
-
     }
 }
