@@ -50,6 +50,9 @@ jobs:
           body: |
             Docker image: ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
 
+      - name: Check disk usage
+        run: df -h
+
       - name: Deploy Docker Compose to Staging
         uses: appleboy/scp-action@v0.1.7
         with:
