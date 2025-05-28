@@ -27,7 +27,7 @@ namespace AHREM_API
 
             builder.Host.UseSerilog();
             
-            // 3rd comment
+            // 4th comment
             // Another random comment
             // random comment
             builder.Services.AddScoped<DBService>();
@@ -37,11 +37,11 @@ namespace AHREM_API
             FeatureLogging.TraceLogger += (sender, s) => Console.WriteLine("TRACE: " + s);
             FeatureLogging.InfoLogger += (sender, s) => Console.WriteLine("INFO: " + s);
             FeatureLogging.ErrorLogger += (sender, s) => Console.WriteLine("ERROR: " + s);
-            /*
-            var config = new EdgeFeatureHubConfig("http://featurehub:8085", "your-api-key");
+            
+            var config = new EdgeFeatureHubConfig("http://featurehub:8085", "e57f4682-5c81-4b76-bc97-3e972f6e7721/l0vIxn0Ul0Z8nS8GuHkuFqB8Zd5ZXM2VqWl9dStF");
             var fh = await config.NewContext().Build();
             bool isAddDevice = fh["AddDevice"].IsEnabled;
-            */
+
             // Add services to the container.
             builder.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -92,11 +92,11 @@ namespace AHREM_API
             app.MapPost("/AddDevice", (Device device, DBService dBService) =>
             {
                 try
-                {/*
+                {
                     if (isAddDevice)
                     {
                         return Results.Problem("This function has been disabled");
-                    }*/
+                    }
                     var test = dBService.AddDevice(device);
                     if (!test)
                     {

@@ -18,9 +18,8 @@ namespace MyWebsite.Pages
         {
             _httpClientFactory = httpClientFactory;
 
-            var featureConfig = new EdgeFeatureHubConfig("http://featurehub:8085", "your-api-key");
+            var featureConfig = new EdgeFeatureHubConfig("http://featurehub:8085", "e57f4682-5c81-4b76-bc97-3e972f6e7721/l0vIxn0Ul0Z8nS8GuHkuFqB8Zd5ZXM2VqWl9dStF");
 
-            // Blocking call (can be improved with caching if performance matters)
             var context = featureConfig.NewContext().Build().GetAwaiter().GetResult();
             AddDeviceEnabled = context["AddDevice"].IsEnabled;
         }
