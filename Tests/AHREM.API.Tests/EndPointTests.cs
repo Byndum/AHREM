@@ -265,5 +265,82 @@ namespace AHREM.API.Tests
             var result = dbService.GetAllDevices();
             Assert.That(result, Is.Null);
         }
+
+        [Test]
+        public void AddDevice_ShouldThrow_WhenMacIsEmpty()
+        {
+            var dbService = GetDbService();
+            var device = new Device { IsActive = true, Firmware = "1.0", MAC = "" };
+            Assert.Throws<MySqlException>(() => dbService.AddDevice(device));
+        }
+
+        [Test]
+        public void AddDevice_ShouldThrow_WhenFirmwareIsNull()
+        {
+            var dbService = GetDbService();
+            var device = new Device { IsActive = true, Firmware = null, MAC = "00:11:22:33:44:55" };
+            Assert.Throws<MySqlException>(() => dbService.AddDevice(device));
+        }
+
+        [Test]
+        public void AddDevice_ShouldThrow_WhenDeviceIsNull()
+        {
+            var dbService = GetDbService();
+            Assert.Throws<NullReferenceException>(() => dbService.AddDevice(null));
+        }
+
+        [Test]
+        public void DeleteDevice_ShouldThrow_WhenIdIsNegative()
+        {
+            var dbService = GetDbService();
+            Assert.DoesNotThrow(() =>
+            {
+                var result = dbService.DeleteDevice(-12345);
+                Assert.That(result, Is.False);
+            });
+        }
+
+        [Test]
+        public void DeleteDevice_ShouldReturnFalse_WhenNoRowsAffected()
+        {
+            var dbService = GetDbService();
+
+            // Try a large number unlikely to exist
+            var result = dbService.DeleteDevice(999999);
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public void GetAllDevices_ShouldIncludeInsertedDevice()
+        {
+            var dbService = GetDbService();
+
+            var newDevice = new Device
+            {
+                IsActive = true,
+                Firmware = "vTest",
+                MAC = $"00:00:{Guid.NewGuid().ToString("N").Substring(0, 10)}"
+            };
+
+            dbService.AddDevice(newDevice);
+
+            var devices = dbService.GetAllDevices();
+            Assert.That(devices.Any(d => d.MAC == newDevice.MAC), Is.True);
+        }
+
+        [Test]
+        public void AddDevice_ShouldSucceed_WithMinimalValidData()
+        {
+            var dbService = GetDbService();
+            var device = new Device
+            {
+                IsActive = false,
+                Firmware = "0.0.1",
+                MAC = "11:11:11:11:11:11"
+            };
+
+            var result = dbService.AddDevice(device);
+            Assert.That(result, Is.True);
+        }
     }
 }
