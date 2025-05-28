@@ -7,15 +7,15 @@ EXPOSE 443
 # Build and publish stage
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
+WORKDIR /src/
 
 # Copy the project file and restore dependencies
-COPY ["Frontend/Frontend.csproj", "Frontend/"]
-RUN dotnet restore "Frontend/Frontend.csproj"
+COPY ["./Frontend/Frontend.csproj", "Frontend/"]
+RUN dotnet restore "./Frontend/Frontend.csproj"
 
 # Copy the full source code and build
 COPY . .
-WORKDIR "/src/Frontend"
+WORKDIR "/src/Frontend/"
 RUN dotnet publish "Frontend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Final image
