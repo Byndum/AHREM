@@ -35,6 +35,7 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
 
       - name: Build and Push WebAPI Image
+        working-directory: ${{ github.workspace }}
         run: |
           docker build \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:latest \
@@ -42,7 +43,8 @@ jobs:
             -f ./AHREM_API/Dockerfile .
           docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api --all-tags
 
-      - name: Build and Push Frontend Image
+      - name: Build and Push Frontend Image  
+        working-directory: ${{ github.workspace }}
         run: |
           docker build \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:latest \
