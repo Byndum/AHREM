@@ -41,7 +41,8 @@ jobs:
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:latest \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:${{ steps.version.outputs.version }} \
             -f ./AHREM_API/Dockerfile .
-          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api --all-tags
+          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:latest
+          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:${{ steps.version.outputs.version }}
 
       - name: Build and Push Frontend Image  
         working-directory: ${{ github.workspace }}
@@ -50,8 +51,8 @@ jobs:
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:latest \
             -t ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:${{ steps.version.outputs.version }} \
             -f ./Frontend/Dockerfile ./Frontend
-          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend --all-tags
-
+          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:latest
+          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:${{ steps.version.outputs.version }}
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -59,7 +60,10 @@ jobs:
           tag: ${{ steps.version.outputs.version }}
           generateReleaseNotes: true
           body: |
-            Docker image: ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
+            Docker images:
+            - ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:${{ steps.version.outputs.version }}
+            - ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:${{ steps.version.outputs.version }}
+
 
 
 
