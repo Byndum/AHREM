@@ -32,12 +32,21 @@ services:
     ports:
       - 8085:8085
 
-  webapi:
-    image: ghcr.io/byndum/ahrem:latest
-    depends_on:
-      - mariadb
-    ports:
-      - "5051:5051"
+    webapi:
+      image: ghcr.io/byndum/ahrem-api:latest
+      ports:
+        - "5051:5051"
+      depends_on:
+        - mariadb
+
+    frontend:
+      image: ghcr.io/byndum/frontend:latest
+      ports:
+        - "5285:8080"
+      depends_on:
+        - webapi
+        - seq
+        - mariadb
 
   flyway:
     image: flyway/flyway:latest
