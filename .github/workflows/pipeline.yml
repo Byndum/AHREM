@@ -49,6 +49,9 @@ jobs:
           generateReleaseNotes: true
           body: |
             Docker image: ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
+            
+      - name: Wait before SCP to prevent SSH handshake issues
+        run: sleep 5
 
       - name: Deploy Docker Compose to Staging
         uses: appleboy/scp-action@v0.1.7
