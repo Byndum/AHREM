@@ -26,7 +26,8 @@ namespace AHREM_API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Host.UseSerilog();
-
+            
+            // Another random comment
             // random comment
             builder.Services.AddScoped<DBService>();
 
