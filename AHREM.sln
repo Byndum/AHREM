@@ -7,11 +7,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AHREM_API", "AHREM_API\AHRE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{68B99182-E0A1-46D0-B7BF-A5339915ED3D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AHREM.API.Tests", "Tests\AHREM.API.Tests\AHREM.API.Tests.csproj", "{1BF61C3E-88D0-4975-9058-8D2355CF6CE6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitoring", "Monitoring\Monitoring.csproj", "{40B85244-487A-48EF-BF75-06F02B3EFFD9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
+		.github\workflows\sonarqube.yml = .github\workflows\sonarqube.yml
+		.github\workflows\test_pipeline.yml = .github\workflows\test_pipeline.yml
+		.github\workflows\workflow.yml = .github\workflows\workflow.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
