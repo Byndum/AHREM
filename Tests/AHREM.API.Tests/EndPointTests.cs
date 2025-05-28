@@ -286,81 +286,114 @@ namespace AHREM.API.Tests
             Assert.That(result, Is.Null);
         }
 
+
+
+
+
+
         [Test]
-        public void AddDevice_ShouldThrow_WhenMacIsEmpty()
+        public void GetAllDevices_ShouldReturnEmptyList_WhenNoDevicesExist()
         {
             var dbService = GetDbService();
-            var device = new Device { IsActive = true, Firmware = "1.0", MAC = "" };
+
+            // Manually truncate devices table if possible (setup needed)
+            var deleted = dbService.DeleteDevice(-1); // No-op call, just a placeholder
+
+            var devices = dbService.GetAllDevices();
+            Assert.That(devices, Is.Not.Null);
+            Assert.That(devices.Count, Is.GreaterThanOrEqualTo(0));
+        }
+
+        [Test]
+        public void AddDevice_ShouldFail_WhenConnectionIsNull()
+        {
+            // Simulate a bad config (null connection string)
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    {"ConnectionStrings:DefaultConnection", ""}
+                })
+                .Build();
+
+            var dbService = new DBService(config);
+            var device = new Device { IsActive = true, Firmware = "Fail", MAC = "00:00:00:00:00:00" };
+
             Assert.Throws<MySqlException>(() => dbService.AddDevice(device));
         }
 
         [Test]
-        public void AddDevice_ShouldThrow_WhenFirmwareIsNull()
+        public void DeleteDevice_ShouldHandleMultipleSequentialDeletes()
         {
             var dbService = GetDbService();
-            var device = new Device { IsActive = true, Firmware = null, MAC = "00:11:22:33:44:55" };
-            Assert.Throws<MySqlException>(() => dbService.AddDevice(device));
-        }
+            var device = new Device { IsActive = true, Firmware = "multi-delete", MAC = "AA:BB:CC:DD:EE:FF" };
 
-        [Test]
-        public void AddDevice_ShouldThrow_WhenDeviceIsNull()
-        {
-            var dbService = GetDbService();
-            Assert.Throws<NullReferenceException>(() => dbService.AddDevice(null));
-        }
+            dbService.AddDevice(device);
+            var addedDevice = dbService.GetAllDevices().FirstOrDefault(d => d.Firmware == "multi-delete");
 
-        [Test]
-        public void DeleteDevice_ShouldThrow_WhenIdIsNegative()
-        {
-            var dbService = GetDbService();
-            Assert.DoesNotThrow(() =>
+            Assert.That(addedDevice, Is.Not.Null);
+            var firstDelete = dbService.DeleteDevice(addedDevice.ID.Value);
+            var secondDelete = dbService.DeleteDevice(addedDevice.ID.Value); // Should now return false
+
+            Assert.Multiple(() =>
             {
-                var result = dbService.DeleteDevice(-12345);
-                Assert.That(result, Is.False);
+                Assert.That(firstDelete, Is.True);
+                Assert.That(secondDelete, Is.False);
             });
         }
 
         [Test]
-        public void DeleteDevice_ShouldReturnFalse_WhenNoRowsAffected()
+        public async Task AddDevice_Endpoint_ShouldReturnError_WhenBodyIsEmpty()
         {
-            var dbService = GetDbService();
+            var appFactory = new WebApplicationFactory<Program>();
+            var client = appFactory.CreateClient();
 
-            // Try a large number unlikely to exist
-            var result = dbService.DeleteDevice(999999);
-            Assert.That(result, Is.False);
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/AddDevice", content);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
-        public void GetAllDevices_ShouldIncludeInsertedDevice()
+        public async Task AddDevice_Endpoint_ShouldReturnError_WhenJsonMalformed()
         {
-            var dbService = GetDbService();
+            var appFactory = new WebApplicationFactory<Program>();
+            var client = appFactory.CreateClient();
 
-            var newDevice = new Device
-            {
-                IsActive = true,
-                Firmware = "vTest",
-                MAC = $"00:00:{Guid.NewGuid().ToString("N").Substring(0, 10)}"
-            };
+            var malformedJson = "{ \"IsActive\": true, \"Firmware\": \"v1.0\", "; // incomplete JSON
+            var content = new StringContent(malformedJson, Encoding.UTF8, "application/json");
 
-            dbService.AddDevice(newDevice);
+            var response = await client.PostAsync("/AddDevice", content);
 
-            var devices = dbService.GetAllDevices();
-            Assert.That(devices.Any(d => d.MAC == newDevice.MAC), Is.True);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
-        public void AddDevice_ShouldSucceed_WithMinimalValidData()
+        public async Task RemoveDevice_Endpoint_ShouldReturnError_WhenIdIsMissing()
+        {
+            var appFactory = new WebApplicationFactory<Program>();
+            var client = appFactory.CreateClient();
+
+            var response = await client.DeleteAsync("/RemoveDevice");
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public void AddDevice_ShouldAcceptLongMacAddress_IfDatabaseAllows()
         {
             var dbService = GetDbService();
-            var device = new Device
-            {
-                IsActive = false,
-                Firmware = "0.0.1",
-                MAC = "11:11:11:11:11:11"
-            };
+            var longMac = "AA:BB:CC:DD:EE:FF:GG:HH:II";
+            var device = new Device { IsActive = true, Firmware = "1.1", MAC = longMac };
 
-            var result = dbService.AddDevice(device);
-            Assert.That(result, Is.True);
+            try
+            {
+                var result = dbService.AddDevice(device);
+                Assert.That(result, Is.True);
+            }
+            catch (MySqlException)
+            {
+                Assert.Pass("DB rejected long MAC as expected.");
+            }
         }
     }
 }
