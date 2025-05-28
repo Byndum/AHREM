@@ -13,6 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["AHREM_API/AHREM_API.csproj", "AHREM_API/"]
+COPY ["Monitoring/Monitoring.csproj", "Monitoring/"]
 RUN dotnet restore "./AHREM_API/AHREM_API.csproj"
 COPY . .
 WORKDIR "/src/AHREM_API"

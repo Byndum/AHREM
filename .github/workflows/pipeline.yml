@@ -34,13 +34,24 @@ jobs:
         env:
           GITHUB_REPO: ${{ github.repository }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push WebAPI Image
+        working-directory: ${{ github.workspace }}
         run: |
           docker build \
-            -t ghcr.io/${{ env.GITHUB_REPO_LC }}:latest \
-            -t ghcr.io/${{ env.GITHUB_REPO_LC }}:${{ steps.version.outputs.version }} \
+            -t ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:latest \
+            -t ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api:${{ steps.version.outputs.version }} \
             -f ./AHREM_API/Dockerfile .
-          docker push ghcr.io/${{ env.GITHUB_REPO_LC }} --all-tags
+          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/ahrem-api --all-tags
+
+      - name: Build and Push Frontend Image  
+        working-directory: ${{ github.workspace }}
+        run: |
+          docker build \
+            -t ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:latest \
+            -t ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend:${{ steps.version.outputs.version }} \
+            -f ./Frontend/Dockerfile ./Frontend
+          docker push ghcr.io/${{ env.GITHUB_REPO_LC }}/frontend --all-tags
+
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
