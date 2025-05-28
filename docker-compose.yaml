@@ -12,6 +12,7 @@ services:
       - .env
     ports:
       - "3306:3306"
+    command: --bind-address=0.0.0.0
 
   seq:
     image: datalust/seq
