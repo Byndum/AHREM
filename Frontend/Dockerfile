@@ -7,8 +7,8 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Frontend/Frontend.csproj", "Frontend/"]
-RUN dotnet restore "./Frontend/Frontend.csproj"
+COPY ["Frontend.csproj", "Frontend/"]
+RUN dotnet restore "./Frontend.csproj"
 COPY . .
 WORKDIR "/src/Frontend"
 RUN dotnet build "./Frontend.csproj" -c $BUILD_CONFIGURATION -o /app/build
