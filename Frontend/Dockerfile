@@ -11,7 +11,7 @@ COPY ["Frontend.csproj", "Frontend/"]
 RUN dotnet restore "./Frontend/Frontend.csproj"
 COPY . .
 WORKDIR "/src/Frontend"
-RUN dotnet build "./Frontend/Frontend.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Frontend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
