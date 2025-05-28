@@ -53,14 +53,12 @@ jobs:
       - name: Check disk usage
         run: df -h
 
-      - name: Deploy Docker Compose to Staging
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ vars.SERVER_IP }}
-          username: ${{ vars.SERVER_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "docker-compose.yaml"
-          target: dowa/
+      - name: Manually SCP docker-compose.yaml
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -o StrictHostKeyChecking=no docker-compose.yaml ${{ vars.SERVER_USERNAME }}@${{ vars.SERVER_IP }}:~/dowa/
+
 
       - name: Start Compose with Database
         env:
