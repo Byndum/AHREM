@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Moq;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MySqlConnector;
 
 namespace AHREM.API.Tests
 {
@@ -192,6 +193,38 @@ namespace AHREM.API.Tests
             Assert.That(responseText, Does.Contain("Error while trying to add new device!"));
         }
 
+        [Test]
+        public void GetAllDevices_ShouldReturnEmptyList_WhenNoDevicesExist()
+        {
+            var dbService = GetDbService();
+
+            // Ensure the table is empty
+            var allDevices = dbService.GetAllDevices();
+            foreach (var device in allDevices)
+            {
+                dbService.DeleteDevice(device.ID.Value);
+            }
+
+            var devices = dbService.GetAllDevices();
+            Assert.That(devices, Is.Not.Null);
+            Assert.That(devices.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void AddDevice_ShouldThrow_WhenMACIsNull()
+        {
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+            {"ConnectionStrings:DefaultConnection", "Server=localhost;Database=air_monitor_db;Uid=root;Pwd=1234;"}
+                })
+                .Build();
+
+            var dbService = new DBService(config);
+            var device = new Device { IsActive = true, Firmware = "v1.0", MAC = null }; // invalid
+
+            Assert.Throws<MySqlException>(() => dbService.AddDevice(device));
+        }
 
     }
 
