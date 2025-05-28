@@ -48,32 +48,32 @@ services:
         - seq
         - mariadb
 
-  flyway:
-    image: flyway/flyway:latest
-    container_name: flyway
-    volumes:
-      - ./db/migrations:/flyway/sql
-    command: [ "migrate" ]
-    env_file:
-      - .env
-    environment:
-      FLYWAY_URL: jdbc:mariadb://mariadb:3306/$${{ vars.DATABASE_NAME }}
-      FLYWAY_USER: $${{ vars.DATABASE_USER }}
-      FLYWAY_PASSWORD: $${{ secrets.DATABASE_PASSWORD }}
-    restart: on-failure
+    flyway:
+      image: flyway/flyway:latest
+      container_name: flyway
+      volumes:
+        - ./db/migrations:/flyway/sql
+      command: [ "migrate" ]
+      env_file:
+        - .env
+      environment:
+        FLYWAY_URL: jdbc:mariadb://mariadb:3306/$${{ vars.DATABASE_NAME }}
+        FLYWAY_USER: $${{ vars.DATABASE_USER }}
+        FLYWAY_PASSWORD: $${{ secrets.DATABASE_PASSWORD }}
+      restart: on-failure
 
-  frontend:
-    build:
-      context: .
-      dockerfile: Frontend/Dockerfile
-    ports:
-      - "5285:8080"
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-    depends_on:
-      - webapi
-      - seq
-      - mariadb
+    frontend:
+      build:
+        context: .
+        dockerfile: Frontend/Dockerfile
+      ports:
+        - "5285:8080"
+      environment:
+        ASPNETCORE_ENVIRONMENT: Development
+      depends_on:
+        - webapi
+        - seq
+        - mariadb
 
 volumes:
   mariadb_data:
