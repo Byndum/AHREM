@@ -3,7 +3,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Frontend/Frontend.csproj", "Frontend/"]
-COPY ["Monitoring/Monitoring.csproj", "Monitoring/"]
 RUN dotnet restore "./Frontend/Frontend.csproj"
 COPY . .
 WORKDIR "/src/Frontend"
