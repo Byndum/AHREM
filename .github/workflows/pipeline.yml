@@ -73,7 +73,7 @@ jobs:
           script: |
             cd dowa
             cat <<EOF > .env
-            DB_NAME=$${{ secrets.DB_NAME }}
+            DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
