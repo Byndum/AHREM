@@ -33,7 +33,7 @@ namespace MyWebsite.Pages
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
-            MonitorService.Log.Information("Index page loaded at {Time}", DateTime.UtcNow);
+            //MonitorService.Log.Information("Index page loaded at {Time}", DateTime.UtcNow);
 
             var response = await client.GetAsync("GetAllDevices");
             if (response.IsSuccessStatusCode)
@@ -50,7 +50,7 @@ namespace MyWebsite.Pages
             var response = await client.PostAsJsonAsync("AddDevice", NewDevice);
 
 
-            MonitorService.Log.Debug("User triggered OnPostSomething");
+            //MonitorService.Log.Debug("User triggered OnPostSomething");
             if (response.IsSuccessStatusCode)
             {
 
