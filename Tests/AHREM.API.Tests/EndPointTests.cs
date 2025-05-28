@@ -193,39 +193,77 @@ namespace AHREM.API.Tests
             Assert.That(responseText, Does.Contain("Error while trying to add new device!"));
         }
 
-        [Test]
-        public void GetAllDevices_ShouldReturnEmptyList_WhenNoDevicesExist()
+        public class NullConnectionDbService : DBService
         {
-            var dbService = GetDbService();
-
-            // Ensure the table is empty
-            var allDevices = dbService.GetAllDevices();
-            foreach (var device in allDevices)
+            public NullConnectionDbService() : base(new ConfigurationBuilder().Build())
             {
-                dbService.DeleteDevice(device.ID.Value);
+                typeof(DBService)
+                    .GetField("_connection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    .SetValue(this, null);
             }
-
-            var devices = dbService.GetAllDevices();
-            Assert.That(devices, Is.Not.Null);
-            Assert.That(devices.Count, Is.EqualTo(0));
         }
 
         [Test]
-        public void AddDevice_ShouldThrow_WhenMACIsNull()
+        public void GetAllDevices_ShouldReturnEmptyList_WhenTableIsEmpty()
         {
-            var config = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
-                {
-            {"ConnectionStrings:DefaultConnection", "Server=localhost;Database=air_monitor_db;Uid=root;Pwd=1234;"}
-                })
-                .Build();
+            var dbService = GetDbService();
 
-            var dbService = new DBService(config);
-            var device = new Device { IsActive = true, Firmware = "v1.0", MAC = null }; // invalid
+            var existing = dbService.GetAllDevices();
+            foreach (var d in existing)
+            {
+                dbService.DeleteDevice(d.ID.Value);
+            }
+
+            var result = dbService.GetAllDevices();
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void AddDevice_ShouldThrow_WhenMacIsNull()
+        {
+            var dbService = GetDbService();
+            var device = new Device { IsActive = true, Firmware = "1.0", MAC = null };
+            Assert.Throws<MySqlException>(() => dbService.AddDevice(device));
+        }
+
+        [Test]
+        public void AddDevice_ShouldThrow_WhenFirmwareTooLong()
+        {
+            var dbService = GetDbService();
+            var device = new Device
+            {
+                IsActive = true,
+                Firmware = new string('X', 1000),
+                MAC = "01:02:03:04:05:06"
+            };
 
             Assert.Throws<MySqlException>(() => dbService.AddDevice(device));
         }
 
-    }
+        [Test]
+        public void DeleteDevice_ShouldReturnFalse_WhenConnectionIsNull()
+        {
+            var dbService = new NullConnectionDbService();
+            var result = dbService.DeleteDevice(1);
+            Assert.That(result, Is.False);
+        }
 
+        [Test]
+        public void AddDevice_ShouldReturnFalse_WhenConnectionIsNull()
+        {
+            var dbService = new NullConnectionDbService();
+            var device = new Device { IsActive = true, Firmware = "1.0", MAC = "11:22:33:44:55:66" };
+            var result = dbService.AddDevice(device);
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public void GetAllDevices_ShouldReturnNull_WhenConnectionIsNull()
+        {
+            var dbService = new NullConnectionDbService();
+            var result = dbService.GetAllDevices();
+            Assert.That(result, Is.Null);
+        }
+    }
 }
