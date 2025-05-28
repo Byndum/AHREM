@@ -49,9 +49,6 @@ jobs:
           generateReleaseNotes: true
           body: |
             Docker image: ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
-            
-      - name: Wait before SCP to prevent SSH handshake issues
-        run: sleep 5
 
       - name: Deploy Docker Compose to Staging
         uses: appleboy/scp-action@v0.1.7
@@ -73,18 +70,7 @@ jobs:
           host: ${{ vars.SERVER_IP }}
           username: ${{ vars.SERVER_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          timeout: 60s
-          debug: true
           script: |
-            sleep 5
-            set -x
             cd dowa
-            cat <<EOF > .env
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
-            EOF
             docker compose pull
             docker compose up -d
-
